@@ -1,0 +1,21 @@
+class Tree:
+    def __init__(self, val=0, left = None, right = None):
+        self.val = val
+        self.left =  left
+        self.right = right
+node6 = None
+node5 = Tree(12)
+node4 = Tree(8)
+node3 = None
+node2 = Tree(15, node5, node6)
+node1 = Tree(5, node3, node4)
+root = Tree(10, node1, node2)
+def DFS(root):
+    if not root:
+        return []
+    result = []
+    result.append(root.val)
+    result.extend(DFS(root.left))
+    result.extend(DFS(root.right))
+    return result
+print(DFS(root))
