@@ -4,11 +4,16 @@ class Tree:
         self.val = val
         self.left =  left
         self.right = right
-def Order_level_traversal(root):
-    if not root:
-        return []
-    result = []
+node6 = None
+node5 = Tree(12)
+node4 = Tree(8)
+node3 = None
+node2 = Tree(15, node5, node6)
+node1 = Tree(5, node3, node4)
+root = Tree(10, node1, node2)
+def BFS(root):
     queue = deque([root])
+    result = []
     while queue:
         size = len(queue)
         level = []
@@ -21,11 +26,12 @@ def Order_level_traversal(root):
                 queue.append(node.right)
         result.append(level)
     return result
-node6 = None
-node5 = Tree(12)
-node4 = Tree(8)
-node3 = None
-node2 = Tree(15, node5, node6)
-node1 = Tree(5, node3, node4)
-root = Tree(10, node1, node2)
-print(Order_level_traversal(root))
+    # while queue:
+    #     node = queue.popleft()
+    #     result.append(node.val)
+    #     if node.left:
+    #         queue.append(node.left)
+    #     if node.right:
+    #         queue.append(node.right)
+    # return result
+print(BFS(root))
