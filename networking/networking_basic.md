@@ -41,7 +41,6 @@ flowchart TD
     L2 --> L1["lớp Truy cập mạng (Network Access - Frame): [MAC H] [IP H] [TCP H] [Hello] [FCS]"]
     L1 --> Bits["Vật lý (Bits): 010110..."]
 ```
-
 ### 3. So sánh
 | Mô hình OSI (7 lớp) | Mô hình TCP/IP (4 lớp) | Chức năng chính |
 | :--- | :--- | :--- |
