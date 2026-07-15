@@ -30,11 +30,11 @@ def set_up():
     return server_socket
 def client(conn, addr):
     print(f'Server connected with {addr}')
-    server_thread = threading.Thread(target=receive, args= ((conn, )))
-    server_thread.start()
+    receive_thread = threading.Thread(target=receive, args= ((conn, )))
+    receive_thread.start()
     send_thread =threading.Thread(target=send, args=((conn, )))
     send_thread.start()
-    send_thread.join()
+    receive_thread.join()
     send_thread.join()
 def main(): 
     my_socket = set_up()
