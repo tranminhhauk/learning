@@ -6,6 +6,9 @@ def udp_server():
     while True:
         data, addr = server.recvfrom(1024)
         print(f'received {addr}: {data.decode()}')
-
+        if data.decode() =="exit":
+            print('server shutdown')
+            server.close()
+            break
         server.sendto("Ok".encode(), addr)
 udp_server()

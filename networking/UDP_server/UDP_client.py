@@ -6,9 +6,11 @@ def UDP_client():
     addr = ('localhost', 8888)
     while True:
         message = input('enter messgae: ')
-        if message.lower() == 'exit':
-            break
         client.sendto(message.encode(), addr)
+        if message.lower() == 'exit':
+            print('Connection shutdown')
+            client.close()
+            break
         try:
             data, add = client.recvfrom(1024)
             print(f'server: {data.decode()} by {add}')
