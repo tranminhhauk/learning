@@ -1,0 +1,15 @@
+<h1>Deactivae Status</h1>
+
+<form action="/deactivate" method="POST">
+    Enter ID: <input name="user_id" required>
+    <button type="submit">Find</button>
+</form>
+
+{% if status %}
+    <br>
+    <form action="/deactivate/save" method="POST">
+        ID: <input name="user_id" value="{{ user_id }}" readonly> <br>
+        New Status: <input name="status" value="{{ status }}"> <br>
+        <button type="submit">Submit</button>
+    </form>
+{% endif %}

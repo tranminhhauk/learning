@@ -1,0 +1,16 @@
+<h1>Update</h1>
+
+<form action="/update" method="POST">
+    Enter ID: <input name="user_id" required>
+    <button type="submit">Find</button>
+</form>
+
+{% if name %}
+    <br>
+    <form action="/update/save" method="POST">
+        ID: <input name="user_id" value="{{ user_id }}" readonly> <br>
+        New Name: <input name="name" value="{{ name }}"> <br>
+        New Day-of-Birth: <input name="dob" value="{{ dob }}"> <br>
+        <button type="submit">Submit</button>
+    </form>
+{% endif %}
