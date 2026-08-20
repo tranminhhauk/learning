@@ -56,7 +56,13 @@ class Storage:
             file.write(user.format_file_txt())
         return True
 
-
+    def delete_user(self, user_id):
+        file_path = self.get_file_path(user_id)
+        if not file_path:
+            return False
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            return True
 storage = Storage()
 @app.route('/user', methods = ['POST'])
 def register_user():
@@ -85,7 +91,11 @@ def deactive_user(user_id):
     user.status = 'INACTIVE'
     storage.save(user)
     return jsonify({"message": "OK", "user": user.convert_dict()}), 200
-
-
+@app.route('/user/<user_id>/', methods = ['DELETE'])
+def delete_user(user_id):
+    deleted = storage.delete_user(user_id)
+    if deleted is False:
+        return jsonify({"message": "Not found"}), 404
+    return jsonify({"message": "User deleted successfully"}), 200
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
