@@ -102,62 +102,99 @@ class Storage:
             return True
         else:
             return False
-        
+
+    def list_all(self):
+        lists = []
+        for file in os.listdir(self.folder):
+            with open(f"{self.folder}/{file}", "r", encoding="utf-8") as f:
+                item = self.object.get_file_format(f.read())
+                lists.append(item)
+        return lists
+            
 user_storage = Storage(folder= 'user-info', object= User)
 book_storage = Storage(folder= 'book-info', object= Book)
 
-@app.route('/user', methods = ['POST'])
-def register_user():
-    data = request.get_json()
-    new_id = user_storage.create_id()
-    new_user = User(user_id=new_id, name=data.get('name'), dob=data.get('dob'))
-    user_storage.save(new_user)
-    return jsonify(new_user.convert_dict()), 201
-@app.route('/user/<user_id>', methods = ['PUT'])
+@app.route('/user', methods = ['GET','POST'])         
+def handle_user():
+    if request.method == "GET":
+        users = user_storage.list_all()
+        result = []
+        for u in users:
+            result.append(u.convert_dict())
+        return jsonify(result), 200
+    
+    elif request.method == "POST":
+        data = request.get_json()
+        new_id = user_storage.create_id()
+        new_user = User(user_id=new_id, name=data.get('name'), dob=data.get('dob'))
+        user_storage.save(new_user)
+        return jsonify(new_user.convert_dict()), 201
+    
+@app.route('/user/<user_id>', methods = ['PUT', 'DELETE'])
 def update_user(user_id):
     user = user_storage.read(user_id)
     if not user:
-        return jsonify({"error": "Not found User"}), 404
-    data = request.get_json()
-    if 'name' in data:
-        user.name = data['name']
-    if 'dob' in data:
-        user.dob = data['dob']
-    user_storage.save(user)
-    return jsonify({'message': 'Update Successfuly', "user": user.convert_dict()})
-@app.route('/user/<user_id>/deactive', methods = ['PUT'])
-def deactive_user(user_id):
-    user = user_storage.read(user_id)
-    if not user:
-        return jsonify({"error": "Not found User"}), 404
-    user.status = 'INACTIVE'
-    user_storage.save(user)
-    return jsonify({"message": "OK", "user": user.convert_dict()}), 200
-@app.route('/user/<user_id>', methods = ['DELETE'])
-def delete_user(user_id):
-    deleted = user_storage.delete(user_id)
-    if deleted is False:
-        return jsonify({"message": "Not found"}), 404
-    return jsonify({"message": "User deleted successfully"}), 200
+        return jsonify({"error": "User not found"}), 404
 
-@app.route('/book', methods = ['POST'])
+    if request.method == "PUT":
+        data = request.get_json()
+        if 'name' in data:
+            user.name = data['name']
+        if 'dob' in data:
+            user.dob = data['dob']
+        if 'status' in data:
+            user.status = data['status']
+
+        user_storage.save(user)
+        return jsonify({"message":"update successfuly", "user": user.convert_dict()})
+    
+    elif request.method == "DELETE":
+        delete = user_storage.delete(user_id)
+        if delete is False:
+            return jsonify({"message": "Not found"}), 404
+        return jsonify({"message": "User deleted successfully"}), 200
+        
+@app.route('/book', methods = ['GET','POST'])
 def register_book():
-    data = request.get_json()
-    new_book_id = book_storage.create_id()
-    new_title = data.get('title')
-    new_author = data.get('author')
-    new_book = Book(book_id=new_book_id, title= new_title, author= new_author, status ='AVAILABLE')
-    book_storage.save(new_book)
-    return jsonify(new_book.convert_dict()), 201
+    if request.method == 'GET':
+        list_book = book_storage.list_all()
+        result = []
+        for book in list_book:
+            result.append(book.convert_dict())
+        return jsonify(result), 200
+    
+    elif request.method == 'POST':
+        data = request.get_json()
+        new_book_id = book_storage.create_id()
+        new_title = data.get('title')
+        new_author = data.get('author')
+        new_book = Book(book_id=new_book_id, title= new_title, author= new_author, status ='AVAILABLE')
+        book_storage.save(new_book)
+        return jsonify(new_book.convert_dict()), 201
 
-@app.route('/book/<book_id>', methods = ['DELETE'])
-def delete_book(book_id):
-    delete = book_storage.delete(book_id)
-    if not delete:
-        return jsonify({"error": "Not found"}), 404
-    return jsonify({'message': "Book deleted successfully"}), 200
+@app.route('/book/<book_id>', methods = ["PUT", "DELETE"])
+def update_book(book_id):
+    if request.method == "PUT":
+        book = book_storage.read(book_id)
+        if not book:
+            return jsonify({"error": "book not found"}), 404
+        data = request.get_json()
+        if 'author' in data:
+            book.author = data['author']
+        if 'title' in data:
+            book.title = data['title']
+        book_storage.save(book)
+        return jsonify({'message': 'Update Successfuly', "book": book.convert_dict()})
 
-@app.route('/user/<user_id>/checkout/<book_id>', methods = ['POST'])
+    elif request.method == "DELETE":
+        delete = book_storage.delete(book_id)
+        if not delete:
+            return jsonify({"error": "Not found"}), 404
+        return jsonify({'message': "Book deleted successfully"}), 200
+
+
+
+@app.route('/<user_id>/checkout/<book_id>', methods = ['POST'])
 def checkout_book(user_id, book_id):
     user = user_storage.read(user_id)
     book = book_storage.read(book_id)
@@ -171,7 +208,7 @@ def checkout_book(user_id, book_id):
     return jsonify({"message": "Checked out", "book": book.convert_dict()}), 200
 
 
-@app.route('/user/<user_id>/return/<book_id>', methods=['POST'])
+@app.route('/<user_id>/return/<book_id>', methods=['POST'])
 def return_book(user_id, book_id):
     book = book_storage.read(book_id)
     if not book:
@@ -181,6 +218,19 @@ def return_book(user_id, book_id):
     book.return_book()
     book_storage.save(book)
     return jsonify({"message": "Returned", "book": book.convert_dict()}), 200
- 
+
+@app.route('/book/search', methods = ["GET"])
+def search_keyword():
+    keyword = request.args.get('keyword', '').strip().lower()
+    if not keyword:
+        return jsonify({"error": "Missing keyword"}), 400
+    all_book = book_storage.list_all()
+    result = []
+    for book in all_book:
+        if keyword in book.title.lower():
+            result.append(book.convert_dict())
+    return jsonify(result), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
