@@ -30,3 +30,4 @@ class Book:
         else:
             borrowed_by = ""  
         return cls(book_id = get_data[0], title = get_data[1], author = get_data[2], status = get_data[3], borrowed_by=borrowed_by)
+

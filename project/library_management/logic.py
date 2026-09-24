@@ -5,9 +5,10 @@ from book import Book
 # user_storage = Storage(folder= 'user-info', object= User)
 book_storage = Storage(folder= 'book-info')
 
-class UserManagement:
+class UserMananger:
     def __init__(self):
         self.user_storage = Storage(folder = 'user-info')
+    
     def get_user(self, user_id):
         return self.user_storage.read(user_id)
 
@@ -20,16 +21,18 @@ class UserManagement:
 
     def register_user(self, data):
         new_id = self.user_storage.create_id()
+        # lock by new_id
         new_user = User(user_id=new_id, name=data.get('name'), dob=data.get('dob'))
         self.user_storage.save(new_user)
+        # unlock / release lock new_id
         return new_user.convert_dict()
     
-    def new_info(self, value, data):
+    def new_info(self, value, data) -> bool:
         if 'name' in data:
             value.name = data['name']
         if 'dob' in data:
             value.dob = data['dob']
-        self.user_storage.save(value)
+        return self.user_storage.save(value)
 
     def deactive_user(self,user_id):
         user = self.user_storage.read(user_id)
@@ -70,8 +73,8 @@ def new_info_book(book, data):
 def delete_book(book_id):
     return book_storage.delete(book_id)
 
-def checkout(user_id,book_id):
-    user = user_storage.read(user_id)
+def checkout(self, user_id,book_id):
+    user = self.user_storage.read(user_id)
     book = book_storage.read(book_id)
     if not user or not book:
         return None, "not_found"

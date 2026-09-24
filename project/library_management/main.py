@@ -1,76 +1,88 @@
 from flask import Flask, jsonify , request
 from logic import *
+from common.common import format_resp
+from common import http_method
 
-
+#
+# {
+#     "message": "abc",
+#  }, 200,
+# controller
+# user_manager
+# user_storage
+#
+#
 
 app = Flask(__name__)
 
-user_storage = Storage('user-info')
+user_manager = UserMananger()
 
-userManagement= UserManagement()
-
-@app.route('/user', methods = ['GET','POST'])         
+@app.route('/user', methods = [http_method.GET, http_method.POST])         
 def handle_user():
-    if request.method == "GET":
-        result = userManagement.show_all_user()
-        return jsonify(result), 200
+    if request.method == http_method.GET:
+        result = user_manager.show_all_user()
+        return format_resp(result, 200)
     
-    elif request.method == "POST":
+    elif request.method == http_method.POST:
         data = request.get_json()
-        new_user = userManagement.register_user(data)
-        return jsonify({"Created":new_user}), 201
+        new_user = user_manager.register_user(data)
+        return format_resp(new_user, 201)
     
 @app.route('/user/<user_id>', methods = ['PUT', 'DELETE'])
 def update_user(user_id):
-    user = userManagement.get_user(user_id)
+    user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
     
     if request.method == "PUT":
         data = request.get_json()
-        userManagement.new_info(user, data)
-        return jsonify({"message":"update successfuly", "user": user.convert_dict()})
+        is_success = user_manager.new_info(user, data)
+        if is_success:
+            return jsonify({"message":"update successfuly", "user": user.convert_dict()})
+        else:
+            return jsonify({"message":"failed to update user info"}), 400
     
     elif request.method == "DELETE":
-        delete = logic.delete_user(user_id)
+        delete = user_manager.delete_user(user_id)
         if delete is False:
             return jsonify({"message": "Not found"}), 404
         return jsonify({"message": "User deleted successfully"}), 200
     
 @app.route('/user/deactive/<user_id>', methods = ['PUT'])
 def deactive(user_id):
-    user = logic.deactive_user(user_id)
+    user = user_manager.deactive_user(user_id)
     if not user:
         return jsonify({"error": "User Not Found"}), 400
+    
     return jsonify({"message": "OK", "User": user}), 200       
 
 
-@app.route('/book', methods = ['GET','POST'])
-def handle_book():
-    if request.method == 'GET':
-        result = logic.show_all_book()
-        return jsonify(result), 200
+# @app.route('/book', methods = ['GET','POST'])
+# def handle_book():
+#     if request.method == 'GET':
+#         result = logic.show_all_book()
+#         return jsonify(result), 200
     
-    elif request.method == 'POST':
-        data = request.get_json()
-        new_book = logic.register_book(data)
-        return jsonify({"append new book": new_book}), 201
+#     elif request.method == 'POST':
+#         data = request.get_json()
+#         new_book = logic.register_book(data)
+#         return jsonify({"append new book": new_book}), 201
 
-@app.route('/book/<book_id>', methods = ["PUT", "DELETE"])
-def update_book(book_id):
-    if request.method == "PUT":
-        book = logic.get_book(book_id)
-        if not book:
-            return jsonify({"error": "book not found"}), 404
-        data = request.get_json()
-        logic.new_info_book(book, data)
-        return jsonify({'message': 'Update Successfuly', "book": book.convert_dict()})
+# @app.route('/book/<book_id>', methods = ["PUT", "DELETE"])
+# def update_book(book_id):
+#     if request.method == "PUT":
+#         book = logic.get_book(book_id)
+#         if not book:
+#             return jsonify({"error": "book not found"}), 404
+#         data = request.get_json()
+#         logic.new_info_book(book, data)
+#         return jsonify({'message': 'Update Successfuly', "book": book.convert_dict()})
 
-    elif request.method == "DELETE":
-        delete = logic.delete_book(book_id)
-        if not delete:
-            return jsonify({"error": "Not found"}), 404
-        return jsonify({'message': "Book deleted successfully"}), 200
+#     elif request.method == "DELETE":
+#         delete = logic.delete_book(book_id)
+#         if not delete:
+#             return jsonify({"error": "Not found"}), 404
+#         return jsonify({'message': "Book deleted successfully"}), 200
 
 
 
