@@ -1,29 +1,34 @@
 from flask import Flask, jsonify , request
-import logic
+from logic import *
+
 
 
 app = Flask(__name__)
 
+user_storage = Storage('user-info')
+
+userManagement= UserManagement()
+
 @app.route('/user', methods = ['GET','POST'])         
 def handle_user():
     if request.method == "GET":
-        result = logic.show_all_user()
+        result = userManagement.show_all_user()
         return jsonify(result), 200
     
     elif request.method == "POST":
         data = request.get_json()
-        new_user = logic.register_user(data)
+        new_user = userManagement.register_user(data)
         return jsonify({"Created":new_user}), 201
     
 @app.route('/user/<user_id>', methods = ['PUT', 'DELETE'])
 def update_user(user_id):
-    user = logic.get_user(user_id)
+    user = userManagement.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
     
     if request.method == "PUT":
         data = request.get_json()
-        logic.new_info(user, data)
+        userManagement.new_info(user, data)
         return jsonify({"message":"update successfuly", "user": user.convert_dict()})
     
     elif request.method == "DELETE":

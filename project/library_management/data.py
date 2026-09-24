@@ -2,9 +2,8 @@ import os
 import random
 
 class Storage:
-    def __init__(self, folder, object):
+    def __init__(self, folder):
         self.folder = folder
-        self.object = object
         self.check_folder()
 
     def check_folder(self):

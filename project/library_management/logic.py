@@ -2,42 +2,45 @@ from data import Storage
 from user import User
 from book import Book
 
-user_storage = Storage(folder= 'user-info', object= User)
-book_storage = Storage(folder= 'book-info', object= Book)
+# user_storage = Storage(folder= 'user-info', object= User)
+book_storage = Storage(folder= 'book-info')
 
-def get_user(user_id):
-    return user_storage.read(user_id)
+class UserManagement:
+    def __init__(self):
+        self.user_storage = Storage(folder = 'user-info')
+    def get_user(self, user_id):
+        return self.user_storage.read(user_id)
 
-def show_all_user():
-    users = user_storage.list_all()
-    result = []
-    for user in users:
-        result.append(user.convert_dict())
-    return result
+    def show_all_user(self):
+        users = self.user_storage.list_all()
+        result = []
+        for user in users:
+            result.append(user.convert_dict())
+        return result
 
-def register_user(data):
-    new_id = user_storage.create_id()
-    new_user = User(user_id=new_id, name=data.get('name'), dob=data.get('dob'))
-    user_storage.save(new_user)
-    return new_user.convert_dict()
+    def register_user(self, data):
+        new_id = self.user_storage.create_id()
+        new_user = User(user_id=new_id, name=data.get('name'), dob=data.get('dob'))
+        self.user_storage.save(new_user)
+        return new_user.convert_dict()
     
-def new_info(value, data):
-    if 'name' in data:
-        value.name = data['name']
-    if 'dob' in data:
-        value.dob = data['dob']
-    user_storage.save(value)
+    def new_info(self, value, data):
+        if 'name' in data:
+            value.name = data['name']
+        if 'dob' in data:
+            value.dob = data['dob']
+        self.user_storage.save(value)
 
-def deactive_user(user_id):
-    user = user_storage.read(user_id)
-    if not user:
-        return None
-    user.status = 'INACTIVE'
-    user_storage.save(user)
-    return user.convert_dict()
+    def deactive_user(self,user_id):
+        user = self.user_storage.read(user_id)
+        if not user:
+            return None
+        user.status = 'INACTIVE'
+        self.user_storage.save(user)
+        return user.convert_dict()
 
-def delete_user(user_id):
-    return user_storage.delete(user_id)
+    def delete_user(self, user_id):
+        return self.user_storage.delete(user_id)
     
 def get_book(book_id):
     return book_storage.read(book_id)
