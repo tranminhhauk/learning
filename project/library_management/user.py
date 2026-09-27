@@ -7,8 +7,20 @@ class User:
         
     def get_id(self):
         return self.user_id
-    
-    def convert_dict(self) -> dict:
+
+    def deactivate(self):
+        self.status = "INACTIVE"
+
+    def activate(self):
+        self.status = "ACTIVE"
+
+    def update_info(self, name = None, dob = None):
+        if name:
+            self.name = name
+        if dob:
+            self.dob = dob
+
+    def convert_dict(self) ->  dict:
         return {
             "user_id": self.user_id,
             "name": self.name,

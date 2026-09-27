@@ -44,14 +44,22 @@ def update_user(user_id):
             return format_resp({"msg": "Not found"}, 404)
         return format_resp({"msg": "User deleted successfully"}, 200)
     
-@app.route('/user/deactive/<user_id>', methods = [http_method.PUT])
+@app.route('/user/deactivate/<user_id>', methods = [http_method.PUT])
 def deactive(user_id):
-    user = user_manager.deactive_user(user_id)
+    user = user_manager.deactivate_user(user_id)
     if not user:
         return format_resp({"error": "User Not Found"}, 400)
     view_out = user.convert_dict()
     return format_resp({"Deactive Ok": view_out}, 200)   
 
+@app.route('/user/activate/<user_id>', methods = [http_method.PUT])
+def activate_user(user_id):
+    user = user_manager.activate_user(user_id)
+    if not user:
+        return format_resp({"error": "User Not Found"}, 400)
+    view_out = user.convert_dict()
+    return format_resp({"Activate Ok": view_out}, 200) 
+  
 @app.route('/book', methods = [http_method.GET, http_method.POST])
 def handle_book():
     if request.method == http_method.GET:
