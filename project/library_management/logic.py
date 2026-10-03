@@ -52,7 +52,7 @@ class BookManagement:
         return self.book_storage.read(book_id, Book)
 
     def show_all_book(self):
-        return self.book_storage(Book)
+        return self.book_storage.list_all(Book)
     
     def register_book(self,data):
         new_id = self.book_storage.create_id()
