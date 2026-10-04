@@ -154,3 +154,56 @@ Dockerfile (viết requirement, docker.ignore), -> image -> container (run bằn
                     .git/
                     .env
                     *.log
+
+### Docker Compose
+
+là công cụ giúp định nghĩa và chạy các ứng dụng đa container (Multi-Container) thông qua một file cấu hình duy nhất đặt tên là docker-compose.yaml.
+
+docker compose up -d
+
+Lúc này Docker Compose sẽ tự động làm chuỗi công việc sau:
+
+    - Tạo một mạng ảo bridge chung cho tất cả các service.
+    - Pull các Image từ Docker Hub về nếu chưa có.
+    - Build các Image từ Dockerfile nội bộ.
+    - Khởi tạo các Volume lưu trữ.
+    - Khởi chạy các Container dettach theo đúng thứ tự khai báo.
+
+Quy trình làm việc với Docker Compose gồm:
+1. Tạo Dockerfile, dockerignore: Định nghĩa môi trường cho từng thành phần.
+2. Tạo file docker-compose.yml: Khai báo các dịch vụ (services), ports, volume và mạng.
+3.  Dùng lệnh để khởi chạy toàn bộ ứng dụng
+
+Các lệnh hay dùng: 
+
+    - docker compose ps : list container
+    - docker compose logs -f web: xem log real time
+    - docker compose exec web sh : mở shell thứ cấp
+    - docker compose up -d --build: để build lại image sau khi thay đổi dockerfile hoặc requirements.txt
+    - docker compose down: dừng toàn hộ hệ thống ( thêm -v nếu muốn dừng và xóa toàn bộ DB/volume)
+
+### Docker compose file (docker-compose.yaml)
+mẫu cấu trúc: 
+
+    version: '3.8'
+    services:
+        (container 1)                   vd: app python
+        web:
+            build: .                    (tự build image từ docker file)
+            port: 
+                - map Port_chạy: Port container
+            volumes:
+                - .:/app                (Bind mount - Hot reload)
+            depends_on:
+                - db                    (thiết lập thứ tự chạy vd database chạy trước web )
+    services:
+        (container 2)                      Database
+        db: 
+            image: todo
+            environment:
+                - todo
+            volumees:
+                -todo                      (Named volums lưu trữ dữ liệu DB)
+    volumse:
+        todo                              (named volumes dùng chung)
+
