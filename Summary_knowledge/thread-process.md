@@ -42,7 +42,7 @@ là lỗi xảy ra trong hệ thống khi nhiều thread hoặc process cùng tr
 Deadlock là tình trạng các thread/process chờ lẫn nhau vô hạn, mỗi bên giữ một tài nguyên và chờ tài nguyên do bên khác giữ, nên không ai tiến triển được.
 
 Thread 1: lấy A rồi chờ B     |  Thread 2: lấy B rồi chờ A
-
+    ex:  todo
 -> giải pháp hiệu quả và đơn giản: 
 
 - Quy ước mọi thread luôn lấy lock theo cùng một thứ tự (luôn A trước, rồi B). Khi đó không thể tạo vòng chờ.
