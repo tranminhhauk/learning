@@ -1,0 +1,8 @@
+services:
+  library:
+    build: .
+    container_name: Library_compose
+    ports:
+      - "8000:5000"
+    volumes:
+      - .:/app
