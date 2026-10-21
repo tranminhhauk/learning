@@ -101,6 +101,14 @@ Dược sử dụng để quản lý các giao dịch trong cơ sở dữ liệu
     SAVEPOINT: Tạo điểm lưu trong một giao dịch để có thể rollback tới đó.
     RELEASE SAVEPOINT: Xóa điểm lưu.
 
+ACID trong transaction
+
+    Atomicity (nguyên tử)	Làm hết hoặc không làm gì	
+    Consistency (nhất quán)	Dữ liệu luôn thỏa mọi luật (ràng buộc)
+	Isolation (cô lập)	Các giao dịch chạy đồng thời không làm hỏng nhau	
+	Durability (bền vững)	Đã COMMIT thì không mất
+
+
 DESCRIBE: Hiển thị cấu trúc của một bảng
 
 SHOW: Hiển thị danh sách các cơ sở dữ liệu, bảng, hoặc thông tin khác
@@ -125,4 +133,6 @@ CROSS JOIN là dạng JOIN đơn giản nhất trong SQL. Nó kết hợp mỗi 
 
 LEFT JOIN EXCLUDE/ RIGHT JOIN EXCLUDE: Thực hiện LEFT JOIN/ RIGHT JOIN mà không muốn lấy phần INNER JOIN. Thực tế thì không có riêng loại JOIN này, có thể dễ dàng thực hiện nó bằng việc thêm điều kiện WHERE Key IS NULL để lọc bỏ những record chung.
 
-FULL JOIN EXCLUDE: Thực hiện FULL JOIN và bỏ đi phần INNER JOIN, xử lý tương tự loại ở trên
+FULL JOIN EXCLUDE: Thực hiện FULL JOIN và bỏ đi phần INNER JOIN, xử lý tương tự loại ở trên 
+
+### INDEX 
